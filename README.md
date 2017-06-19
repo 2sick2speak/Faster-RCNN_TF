@@ -61,7 +61,29 @@ This repo was tested and tied for single class detection for custom dataset call
 
 ### How to customize to new dataset
 
+Current datasets are tightly connected and hardcoded into library code (that's no good).
+All workflow were tested via one class detection and many class can work not properl in validation pipeline.
+
+To add a custom dataset:
+
+1. Convert it to VOC Pascal
+2. Make symlink and call it `dental`
+
+   ```Shell
+   cd $FRCN_ROOT/data
+   ln -s $PATH_TO_YOUR_DATA dental
+   ```
+3. Fix class name in 'faster_rcnn/datasets/factory.py#L27' from 'dental' to your class name
+4. Other stuff is similar as described in `How to run`
+
 ### How to run experiments query
+
+For parallel and sequential experiments execution was written simple script - `experiments_runner.py`.
+It takes basic config from `experiments/cfgs/base_config.yml` and experiments variations from `expertiments/experiment_list.py` and execute them in multiprocessing way.
+
+In experiments store one-line diff variations for base params, which are merged and run by script.
+It's important to change `EXP_NAME` in every experiment to save data into different folders.
+
 
 ### How to run forward pass on custom images folder
 
@@ -72,6 +94,7 @@ This repo was tested and tied for single class detection for custom dataset call
 3. Remove more unused code. (Big part of preprocessing looks like not required)
 4. Test with more params variations
 5. More flexible model saving to reduce HDD space consumption
+6. GPU parallelization for experiments
 
 
 ### Training Model on Pascal dataset
@@ -110,7 +133,7 @@ This repo was tested and tied for single class detection for custom dataset call
 5. Change in config dataset name to `DATASET_NAME: voc_2007`
 6. Run training and validation as described in `How to run`
 
-###References
+### References
 [Faster R-CNN caffe version](https://github.com/rbgirshick/py-faster-rcnn)
 [smallcorgi TF implementation](https://github.com/smallcorgi/Faster-RCNN_TF)
 
