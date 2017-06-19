@@ -28,10 +28,7 @@ def iou(a, b):
 
     i = intersection(a, b)
     u = union(a, b)
-
-    area_i = i[2] * i[3]
-    area_u = u[2] * u[3]
-    return float(area_i) / float(area_u)
+    return float(i[2] / u[2]) * float(i[3] / u[3])
 
 
 def collect_metrics(ground_truth, pred_boxes_dict,

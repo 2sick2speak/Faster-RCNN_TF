@@ -109,7 +109,7 @@ if __name__ == '__main__':
     if not os.path.exists(det_folder):
         os.makedirs(det_folder)
 
-    det_file = os.path_join(det_folder, 'image_detections.csv')
+    det_file = os.path.join(det_folder, 'image_detections.csv')
 
 
     with open(det_file, "w") as csv_file:

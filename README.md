@@ -19,7 +19,7 @@ This is experimental fork of [smallcorgi TF implementation](https://github.com/s
 3. Clone this Faster R-CNN repository
 4. Build the Cython modules
     ```Shell
-    cd $FRCN_ROOT/lib
+    cd $FRCN_ROOT/faster_rcnn
     make
     ```
 5. Download pre-trained ImageNet models
@@ -27,6 +27,8 @@ This is experimental fork of [smallcorgi TF implementation](https://github.com/s
    Download the pre-trained ImageNet models [[Google Drive]](https://drive.google.com/open?id=0ByuDEGFYmWsbNVF5eExySUtMZmM) [[Dropbox]](https://www.dropbox.com/s/po2kzdhdgl4ix55/VGG_imagenet.npy?dl=0)
    
     ```Shell
+    mkdir data
+    cd data & mkdir pretrain_model
     mv VGG_imagenet.npy $FRCN_ROOT/data/pretrain_model/VGG_imagenet.npy
     ```
 
@@ -41,7 +43,7 @@ This repo was tested and tied for single class detection for custom dataset call
    cd $FRCN_ROOT/data
    ln -s $PATH_TO_DENTAL dental
    ```
-3. Set up experiments params in new yml file in `experiments/cfgs` folder 
+3. Set up experiments params in new yml file in `experiments/cfgs` folder. You can do it by changing `base_config.yml` or create separate file
 4. From `$FRCN_ROOT` folder run
 
    ```Shell
@@ -62,18 +64,18 @@ This repo was tested and tied for single class detection for custom dataset call
 ### How to customize to new dataset
 
 Current datasets are tightly connected and hardcoded into library code (that's no good).
-All workflow were tested via one class detection and many class can work not properl in validation pipeline.
+All workflow were tested via one class detection and many class can work not properly in validation pipeline.
 
 To add a custom dataset:
 
 1. Convert it to VOC Pascal
-2. Make symlink and call it `dental`
+2. Make symlink and call it `dental` (because now this name is hardcoded in `faster_rcnn/datasets/factory.py`)
 
    ```Shell
    cd $FRCN_ROOT/data
    ln -s $PATH_TO_YOUR_DATA dental
    ```
-3. Fix class name in 'faster_rcnn/datasets/factory.py#L27' from 'dental' to your class name
+3. Fix class name in 'faster_rcnn/datasets/factory.py#L27' from `dental` to your class name
 4. Other stuff is similar as described in `How to run`
 
 ### How to run experiments query
@@ -143,5 +145,6 @@ Result will be saved to `output/{EXP_NAME}/folder_predict/image_detections.csv`
 
 ### References
 [Faster R-CNN caffe version](https://github.com/rbgirshick/py-faster-rcnn)
+
 [smallcorgi TF implementation](https://github.com/smallcorgi/Faster-RCNN_TF)
 
