@@ -87,6 +87,14 @@ It's important to change `EXP_NAME` in every experiment to save data into differ
 
 ### How to run forward pass on custom images folder
 
+To run forward pass on folder with images you need to run following script
+
+```Shell
+python3 ./tools/predict_folder.py --device gpu --device_id 0  --cfg ./experiments/cfgs/{CONFIG_NAME}  --num_iter {ITER_NUM} --data_path {PATH_TO_DATA}
+```
+
+Result will be saved to `output/{EXP_NAME}/folder_predict/image_detections.csv`
+
 ### What is pending to fix/implement
 
 1. Configurable datasets without hardcode :(
