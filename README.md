@@ -1,47 +1,81 @@
-# Faster-RCNN_TF
+# Faster RCNN via Tensorflow
 
-This is an experimental Tensorflow implementation of Faster RCNN - a convnet for object detection with a region proposal network.
-For details about R-CNN please refer to the paper [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](http://arxiv.org/pdf/1506.01497v3.pdf) by Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun.
+This is experimental fork of [smallcorgi TF implementation](https://github.com/smallcorgi/Faster-RCNN_TF).
 
+### What was changed
 
-### Requirements: software
+1. Deleted a lot of unused and dead code
+2. Deleted all Matlab and selective search references
+3. Switched to python3
+4. Added tensorboard logging of metrics and validation into `tensorboard_data` folder
+5. Added simple experiments runner via 'experiments_runner.py' + configs
+6. Added validation on validation set during training.
+7. Save boxes, models, metrics and cache data into `output/{EXP_NAME}` folder
 
-1. Requirements for Tensorflow (see: [Tensorflow](https://www.tensorflow.org/))
+### How to install
 
-2. Python packages you might not have: `cython`, `python-opencv`, `easydict`
-
-### Requirements: hardware
-
-1. For training the end-to-end version of Faster R-CNN with VGG16, 3G of GPU memory is sufficient (using CUDNN)
-
-### Installation (sufficient for the demo)
-
-1. Clone the Faster R-CNN repository
-  ```Shell
-  # Make sure to clone with --recursive
-  git clone --recursive https://github.com/smallcorgi/Faster-RCNN_TF.git
-  ```
-
-2. Build the Cython modules
+1. Install Tensorflow
+2. Install python dependencies `pip3 install -r requirements.txt`
+3. Clone this Faster R-CNN repository
+4. Build the Cython modules
     ```Shell
     cd $FRCN_ROOT/lib
     make
     ```
+5. Download pre-trained ImageNet models
 
-### Demo
+   Download the pre-trained ImageNet models [[Google Drive]](https://drive.google.com/open?id=0ByuDEGFYmWsbNVF5eExySUtMZmM) [[Dropbox]](https://www.dropbox.com/s/po2kzdhdgl4ix55/VGG_imagenet.npy?dl=0)
+   
+    ```Shell
+    mv VGG_imagenet.npy $FRCN_ROOT/data/pretrain_model/VGG_imagenet.npy
+    ```
 
-*After successfully completing [basic installation](#installation-sufficient-for-the-demo)*, you'll be ready to run the demo.
+### How to run
 
-Download model training on PASCAL VOC 2007  [[Google Drive]](https://drive.google.com/open?id=0ByuDEGFYmWsbZ0EzeUlHcGFIVWM) [[Dropbox]](https://www.dropbox.com/s/cfz3blmtmwj6bdh/VGGnet_fast_rcnn_iter_70000.ckpt?dl=0)
+This repo was tested and tied for single class detection for custom dataset called `dental` that was organized in VOC Pascal format. Also whole training pipeline was tested on GPU.
 
-To run the demo
-```Shell
-cd $FRCN_ROOT
-python ./tools/demo.py --model model_path
-```
-The demo performs detection using a VGG16 network trained for detection on PASCAL VOC 2007.
+1. Create dataset in VOC format
+2. Create symlink to `data` folder
 
-### Training Model
+   ```Shell
+   cd $FRCN_ROOT/data
+   ln -s $PATH_TO_DENTAL dental
+   ```
+3. Set up experiments params in new yml file in `experiments/cfgs` folder 
+4. From `$FRCN_ROOT` folder run
+
+   ```Shell
+   python3 ./tools/train_net.py --cfg experiments/cfgs/{CONFIG_NAME}
+   ```
+5. Check progress in tensorboard
+
+   ```
+   tensorboard --logdir=$PATH_TO_PROJECT/tensorboard_data/{EXP_NAME}
+   ```
+6. Run prediction on validation for certain model iteration
+   ```Shell
+   python3 ./tools/test_net.py --device gpu --device_id 0  --cfg ./experiments/cfgs/{CONFIG_NAME}  --num_iter {ITER_NUM}
+   ```
+7. Trained model, bboxes and images will be in `output/{EXP_NAME}` folder
+
+
+### How to customize to new dataset
+
+### How to run experiments query
+
+### How to run forward pass on custom images folder
+
+### What is pending to fix/implement
+
+1. Configurable datasets without hardcode :(
+2. Weights sharing between validation/train :(
+3. Remove more unused code. (Big part of preprocessing looks like not required)
+4. Test with more params variations
+5. More flexible model saving to reduce HDD space consumption
+
+
+### Training Model on Pascal dataset
+
 1. Download the training, validation, test data and VOCdevkit
 
 	```Shell
@@ -73,51 +107,10 @@ The demo performs detection using a VGG16 network trained for detection on PASCA
     cd $FRCN_ROOT/data
     ln -s $VOCdevkit VOCdevkit2007
     ```
-    
-5. Download pre-trained ImageNet models
-
-   Download the pre-trained ImageNet models [[Google Drive]](https://drive.google.com/open?id=0ByuDEGFYmWsbNVF5eExySUtMZmM) [[Dropbox]](https://www.dropbox.com/s/po2kzdhdgl4ix55/VGG_imagenet.npy?dl=0)
-   
-   	```Shell
-    mv VGG_imagenet.npy $FRCN_ROOT/data/pretrain_model/VGG_imagenet.npy
-    ```
-
-6. Run script to train and test model
-	```Shell
-	cd $FRCN_ROOT
-	./experiments/scripts/faster_rcnn_end2end.sh $DEVICE $DEVICE_ID VGG16 pascal_voc
-	```
-  DEVICE is either cpu/gpu
-
-### The result of testing on PASCAL VOC 2007 
-
-| Classes       | AP     |
-|-------------|--------|
-| aeroplane   | 0.698 |
-| bicycle     | 0.788 |
-| bird        | 0.657 |
-| boat        | 0.565 |
-| bottle      | 0.478 |
-| bus         | 0.762 |
-| car         | 0.797 |
-| cat         | 0.793 |
-| chair       | 0.479 |
-| cow         | 0.724 |
-| diningtable | 0.648 |
-| dog         | 0.803 |
-| horse       | 0.797 |
-| motorbike   | 0.732 |
-| person      | 0.770 |
-| pottedplant | 0.384 |
-| sheep       | 0.664 |
-| sofa        | 0.650 |
-| train       | 0.766 |
-| tvmonitor   | 0.666 |
-| mAP        | 0.681 |
-
+5. Change in config dataset name to `DATASET_NAME: voc_2007`
+6. Run training and validation as described in `How to run`
 
 ###References
 [Faster R-CNN caffe version](https://github.com/rbgirshick/py-faster-rcnn)
-
-[A tensorflow implementation of SubCNN (working progress)](https://github.com/yuxng/SubCNN_TF)
+[smallcorgi TF implementation](https://github.com/smallcorgi/Faster-RCNN_TF)
 

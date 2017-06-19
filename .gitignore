@@ -2,3 +2,7 @@
 *.so
 *.o
 faster_rcnn_models
+data
+temp
+output
+experiments/completed_experiments.txt

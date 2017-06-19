@@ -1,0 +1,19 @@
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "small_extended_scales_default"}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "small_extended_scales_default_other_rnd"}, "RNG_SEED": 31337}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16], "EXP_NAME": "small_scales_reduced_high"}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "small_extended_scales_default_lower_rpn"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "small_ex_scales_lower_rpn_big_batch"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "small_ex_scales_lower_rpn_big_batch_low_bg_thrsh"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "sm_ex_scl_lower_rpn_big_batch_low_bg_t_h_bg_t"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0, "BG_THRESH_HI": 0.7, "FG_THRESH": 0.7}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16], "EXP_NAME": "sm_ex_scl_lower_rpn_big_batch_low_bg_t_high_bg_t_low_anchor"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0, "BG_THRESH_HI": 0.7, "FG_THRESH": 0.7}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "sm_ex_scl_lower_rpn_big_batch_low_bg_t_h_bg_strict"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0, "BG_THRESH_HI": 0.9, "FG_THRESH": 0.9}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "ANCHOR_RATIO": [0.5, 1, 2, 3], "EXP_NAME": "low_bg_t_h_bg_t_anchor_more"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0, "BG_THRESH_HI": 0.7, "FG_THRESH": 0.7}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16], "EXP_NAME": "bg_05_low_anchor"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8], "EXP_NAME": "bg_05_more_low_anchor"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "bg_05_rpn_neg_04"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0, "RPN_NEGATIVE_OVERLAP": 0.4}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "bg_05_rpn_neg_04_fgfr_07"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0, "RPN_NEGATIVE_OVERLAP": 0.4, "RPN_FG_FRACTION": 0.7}}
+{"GENERAL": {"ANCHOR_SCALES": [1, 2, 4], "EXP_NAME": "bg_05_lowest_anchor"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0}}
+{"GENERAL": {"ANCHOR_SCALES": [1, 2, 4], "EXP_NAME": "bg_05_lowest_anchor_decay"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0, "STEPSIZE": 5000}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "small_ex_scales_lower_rpn_bigger_batch"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 512, "BG_THRESH_LO": 0.0}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8, 16, 32], "EXP_NAME": "small_ex_scales_lower_smallest_rpn"}, "TEST": {"RPN_MIN_SIZE": 4}, "TRAIN": {"RPN_MIN_SIZE": 4, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0}}
+{"GENERAL": {"ANCHOR_SCALES": [2, 4, 8], "EXP_NAME": "bg_05_rpn_neg_06_low_scale"}, "TEST": {"RPN_MIN_SIZE": 8}, "TRAIN": {"RPN_MIN_SIZE": 8, "RPN_BATCHSIZE": 256, "BG_THRESH_LO": 0.0, "RPN_NEGATIVE_OVERLAP": 0.6}}
