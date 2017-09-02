@@ -28,13 +28,29 @@ for split in ['trainval', 'test']:
     __sets[name] = (lambda split=split:
             datasets.dental(split, dental_classes, 'dental'))
 
+# Caries dataset
+for split in ['trainval', 'test']:
+    name = 'caries_{}'.format(split)
+    print(name)
+    caries_classes = ['caries']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, caries_classes, 'caries'))
+
 ## Periodontitis dataset
 for split in ['trainval', 'test']:
     name = 'periodont_{}'.format(split)
     print(name)
     periodont_classes = ['periodontitis']
     __sets[name] = (lambda split=split:
-            datasets.dental(split, periodont_classes, 'periodontitis', '.jpeg'))
+            datasets.dental(split, periodont_classes, 'periodontitis'))
+
+## Caries + periodontitis dataset
+for split in ['trainval', 'test']:
+    name = 'cp_{}'.format(split)
+    print(name)
+    cp_classes = ['periodontitis', 'caries']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, cp_classes, 'cp'))
 
 def get_imdb(name):
     """Get an imdb (image database) by name."""

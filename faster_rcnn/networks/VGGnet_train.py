@@ -4,11 +4,14 @@ from fast_rcnn.config import cfg
 
 #define
 
-n_classes = 2
+# n_classes = 2
+
 _feat_stride = [16,]
 
 class VGGnet_train(Network):
     def __init__(self, trainable=True):
+        self.n_classes = cfg.GENERAL.N_CLASSES
+        print('N_CLASSES =', self.n_classes)
         self.inputs = []
         self.data = tf.placeholder(tf.float32, shape=[None, None, None, 3])
         self.im_info = tf.placeholder(tf.float32, shape=[None, 3])
@@ -75,7 +78,7 @@ class VGGnet_train(Network):
                 cfg.GENERAL.ANCHOR_RATIO, 'TRAIN', name = 'rpn_rois'))
 
         (self.feed('rpn_rois','gt_boxes')
-             .proposal_target_layer(n_classes,name = 'roi-data'))
+             .proposal_target_layer(self.n_classes,name = 'roi-data'))
 
 
         #========= RCNN ============
@@ -85,9 +88,9 @@ class VGGnet_train(Network):
              .dropout(0.5, name='drop6')
              .fc(4096, name='fc7')
              .dropout(0.5, name='drop7')
-             .fc(n_classes, relu=False, name='cls_score')
+             .fc(self.n_classes, relu=False, name='cls_score')
              .softmax(name='cls_prob'))
 
         (self.feed('drop7')
-             .fc(n_classes*4, relu=False, name='bbox_pred'))
+             .fc(self.n_classes*4, relu=False, name='bbox_pred'))
 

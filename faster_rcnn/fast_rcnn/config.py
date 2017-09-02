@@ -43,7 +43,8 @@ __C.GENERAL.BASE_ANCHOR_SIZE = 16
 __C.GENERAL.ANCHOR_RATIO = [0.5, 1, 2]
 
 # Task classes without __background__
-__C.GENERAL.CLASSES = ('teeth')
+__C.GENERAL.CLASSES = ('teeth') # probably not needed at all???
+__C.GENERAL.N_CLASSES = 2
 __C.GENERAL.DATASET_NAME = 'dental'
 
 #

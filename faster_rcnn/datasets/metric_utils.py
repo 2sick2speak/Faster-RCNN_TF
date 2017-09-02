@@ -74,6 +74,22 @@ def collect_metrics(ground_truth, pred_boxes_dict,
             metrics.append(metric)
             continue
 
+        elif len(all_gt_boxes) == 0 and len(all_pred_boxes) > 0:
+            # Only false positivies
+            metric['tp'] = 0
+            metric['fp'] = len(all_pred_boxes)
+            metric['fn'] = 0
+            metric['aiou'] = 0
+            metric['gtp'] = 0
+            metric['precision'] = 0
+            metric['recall'] = 0
+            metric['accuracy'] = 0
+            metric['f'] = 0
+            metric['num_pred_boxes'] = len(all_pred_boxes)
+            metric['num_gt_boxes'] = 0
+            metrics.append(metric)
+            continue
+
         # First - predicted, second - gt
         for i, gt_box in enumerate(all_gt_boxes):
             for j, pred_box in enumerate(all_pred_boxes):

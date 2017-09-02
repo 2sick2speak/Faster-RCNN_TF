@@ -2,11 +2,13 @@ import tensorflow as tf
 from networks.network import Network
 from fast_rcnn.config import cfg
 
-n_classes = 2
+# n_classes = 2
+
 _feat_stride = [16,]
 
 class VGGnet_test(Network):
     def __init__(self, trainable=True):
+        self.n_classes = cfg.GENERAL.N_CLASSES
         self.inputs = []
         self.data = tf.placeholder(tf.float32, shape=[None, None, None, 3])
         self.im_info = tf.placeholder(tf.float32, shape=[None, 3])
@@ -56,9 +58,9 @@ class VGGnet_test(Network):
              .roi_pool(7, 7, 1.0/16, name='pool_5')
              .fc(4096, name='fc6')
              .fc(4096, name='fc7')
-             .fc(n_classes, relu=False, name='cls_score')
+             .fc(self.n_classes, relu=False, name='cls_score')
              .softmax(name='cls_prob'))
 
         (self.feed('fc7')
-             .fc(n_classes*4, relu=False, name='bbox_pred'))
+             .fc(self.n_classes*4, relu=False, name='bbox_pred'))
 

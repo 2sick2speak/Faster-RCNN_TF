@@ -19,6 +19,7 @@ import tensorflow as tf
 # For forward pass
 from fast_rcnn.test import validate_model
 
+tf.logging.set_verbosity(tf.logging.DEBUG)
 class SolverWrapper(object):
     """A simple wrapper around Caffe's solver.
     This wrapper gives us control over he snapshotting process, which we
@@ -173,6 +174,8 @@ class SolverWrapper(object):
         last_snapshot_iter = -1
         timer = Timer()
 
+        #import pdb
+        #pdb.set_trace()
         # mean loss
         rpn_lb_list = []
         rpn_cls_list = []
@@ -310,6 +313,7 @@ def train_net(network, imdb, roidb, output_dir, config_name, pretrained_model=No
     saver = tf.train.Saver(max_to_keep=100)
     config = tf.ConfigProto(allow_soft_placement=True)
     config.gpu_options.allow_growth = True
+    #pretrained_model=None
     with tf.Session(config=config) as sess:
         sw = SolverWrapper(
             sess, saver, network, imdb, roidb,
