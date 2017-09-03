@@ -13,6 +13,7 @@ from datasets.factory import get_imdb
 from networks.factory import get_network
 import tensorflow as tf
 
+
 def _get_image_blob(im):
     """Converts an image into a network input.
     Arguments:
@@ -257,42 +258,43 @@ def test_net(sess, net, imdb, num_iter=None):
 
     det_file = os.path.join(bounding_boxes, 'bounding_boxes{0}.csv'.format(extra_files_path))
     image_names = all_boxes[0]
-    image_boxes = all_boxes[1]
-    #print(len(all_boxes))
-    #print(len(all_boxes[2]))
-    #print(imdb._classes)
 
-    # TODO Don't Work for more than 1 class classification. FIXME
+    print('N images:', len(image_names))
+    print('N classes:', len(all_boxes))
+    print('Classes:', imdb._classes)
 
     data_to_save = []
-    for i, img_name in enumerate(image_names):
-        boxes = image_boxes[i]
-        for j, box in enumerate(boxes):
-            data_to_save.append([
-                img_name,
-                int(box[0]),
-                int(box[1]),
-                int(box[2]),
-                int(box[3]),
-                box[4],
-                j
-            ])
-
-    metrics = imdb.evaluate_metrics(data_to_save)
-    metrics_path = os.path.join(output, 'metrics')
-    if not os.path.exists(metrics_path):
-        os.makedirs(metrics_path)
-
-    metrics_filename = os.path.join(metrics_path, 'metrics{0}.csv'.format(extra_files_path))
-    metrics.to_csv(metrics_filename, index=False)
-    print(metrics.describe())
+    for i, img_name in list(enumerate(image_names)):
+        for j, class_name in list(enumerate(imdb._classes))[1:]:
+            boxes = all_boxes[j][i]
+            for k, box in enumerate(boxes):
+                data_to_save.append([
+                    img_name,
+                    int(box[0]),
+                    int(box[1]),
+                    int(box[2]),
+                    int(box[3]),
+                    box[4],
+                    k,
+                    class_name
+                ])
 
     with open(det_file, "w") as csv_file:
         writer = csv.writer(csv_file, delimiter=',')
-        writer.writerow(['img_name', 'x1', 'y1', 'x2', 'y2', 'score', 'box_id'])
+        writer.writerow(['img_name', 'x1', 'y1', 'x2', 'y2', 'score', 'box_id', 'class_name'])
         for line in data_to_save:
             writer.writerow(line)
 
+    # TODO Calculate separate metrics for each class
+    metrics = imdb.evaluate_metrics(data_to_save)
+
+    metrics_path = os.path.join(output, 'metrics')
+    if not os.path.exists(metrics_path):
+        os.makedirs(metrics_path)
+    metrics_filename = os.path.join(metrics_path, 'metrics{0}.csv'.format(extra_files_path))
+    metrics.to_csv(metrics_filename, index=False)
+
+    print(metrics.describe())
     print('Validation finished for iter num: {0}'.format(num_iter))
 
     return metrics
@@ -320,6 +322,8 @@ def return_predictions_web(sess, net, img):
         keep = nms(cls_dets, cfg.TEST.NMS)
         cls_dets = cls_dets[keep, :]
         all_boxes[j][0] = cls_dets # [fclass, image]
+
+    # TODO FIXME Not reviewed for multiple classes
 
     image_names = all_boxes[0]
     image_boxes = all_boxes[1]
@@ -369,3 +373,4 @@ def validate_model(num_iter):
     # TODO Check on new drivers that session is closing
     sess_forward.close()
     return metrics
+

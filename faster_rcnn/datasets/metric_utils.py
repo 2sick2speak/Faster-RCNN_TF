@@ -48,6 +48,10 @@ def collect_metrics(ground_truth, pred_boxes_dict,
     iou_threshold : float, optional (default=0.5)
         Threshhold for iou to assign certain pred box to certain gt box
     """
+#    print(ground_truth)
+#    print(pred_boxes_dict)
+#    print(validation_files)
+
     metrics = []
     for img_name in validation_files:
         metric = dict()
@@ -147,6 +151,8 @@ def collect_metrics(ground_truth, pred_boxes_dict,
         [len(pred_boxes_dict[key]) for key in pred_boxes_dict.keys()])
     assert metrics['num_pred_boxes'].sum() == total_boxes_predicted
 
+#    print(metrics)
+    
     return metrics
 
 
