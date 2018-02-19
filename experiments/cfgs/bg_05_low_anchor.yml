@@ -1,0 +1,157 @@
+!!python/object/new:easydict.EasyDict
+dictitems:
+  DATA_DIR: /data/proj_dental/dental_max/Faster-RCNN_TF/data
+  EPS: 1.0e-14
+  GENERAL: &id009 !!python/object/new:easydict.EasyDict
+    dictitems:
+      ANCHOR_RATIO: &id001 [0.5, 1, 2, 3]
+      ANCHOR_SCALES: &id002 [2, 4, 8, 16]
+      BASE_ANCHOR_SIZE: 16
+      CLASSES: teeth
+      DATASET_NAME: dental
+      EXP_NAME: bg_05_low_anchor
+    state:
+      ANCHOR_RATIO: *id001
+      ANCHOR_SCALES: *id002
+      BASE_ANCHOR_SIZE: 16
+      CLASSES: teeth
+      DATASET_NAME: dental
+      EXP_NAME: bg_05_low_anchor
+  GPU_ID: 0
+  IS_MULTISCALE: false
+  PIXEL_MEANS: &id010 !!python/object/apply:numpy.core.multiarray._reconstruct
+    args:
+    - !!python/name:numpy.ndarray ''
+    - !!python/tuple [0]
+    - !!binary |
+      Yg==
+    state: !!python/tuple
+    - 1
+    - !!python/tuple [1, 1, 3]
+    - !!python/object/apply:numpy.dtype
+      args: [f8, 0, 1]
+      state: !!python/tuple [3, <, null, null, null, -1, -1, 0]
+    - false
+    - !!binary |
+      0LNZ9bm+WUB/arx0k/xcQK+UZYhjsV5A
+  PRETRAINED_MODEL: /data/proj_dental/dental_max/Faster-RCNN_TF/data/pretrain_model/VGG_imagenet.npy
+  PRETRAINED_MODEL_FILE: VGG_imagenet.npy
+  RNG_SEED: 3
+  ROOT_DIR: /data/proj_dental/dental_max/Faster-RCNN_TF
+  TEST: &id011 !!python/object/new:easydict.EasyDict
+    dictitems:
+      IMAGE_THRESH: 0.05
+      IOU_THRESHOLD: 0.5
+      MAX_PER_IMAGE: 300
+      MAX_SIZE: 2000
+      NETWORK_NAME: VGGnet_test
+      NMS: 0.3
+      NO_SOFTMAX: false
+      RPN_MIN_SIZE: 8
+      RPN_NMS_THRESH: 0.7
+      RPN_POST_NMS_TOP_N: 300
+      RPN_PRE_NMS_TOP_N: 6000
+      SCALES: &id003 [1200]
+    state:
+      IMAGE_THRESH: 0.05
+      IOU_THRESHOLD: 0.5
+      MAX_PER_IMAGE: 300
+      MAX_SIZE: 2000
+      NETWORK_NAME: VGGnet_test
+      NMS: 0.3
+      NO_SOFTMAX: false
+      RPN_MIN_SIZE: 8
+      RPN_NMS_THRESH: 0.7
+      RPN_POST_NMS_TOP_N: 300
+      RPN_PRE_NMS_TOP_N: 6000
+      SCALES: *id003
+  TRAIN: &id012 !!python/object/new:easydict.EasyDict
+    dictitems:
+      BATCH_SIZE: 128
+      BBOX_INSIDE_WEIGHTS: &id004 [1.0, 1.0, 1.0, 1.0]
+      BBOX_NORMALIZE_MEANS: &id005 [0.0, 0.0, 0.0, 0.0]
+      BBOX_NORMALIZE_STDS: &id006 [0.1, 0.1, 0.2, 0.2]
+      BBOX_NORMALIZE_TARGETS: true
+      BBOX_NORMALIZE_TARGETS_PRECOMPUTED: true
+      BBOX_THRESH: 0.5
+      BG_THRESH_HI: 0.7
+      BG_THRESH_LO: 0.0
+      DISPLAY: 10
+      FG_FRACTION: 0.25
+      FG_THRESH: 0.7
+      HAS_VALIDATION: true
+      IMS_PER_BATCH: 1
+      LEARNING_RATE: 0.001
+      MAX_SIZE: 2000
+      MOMENTUM: 0.9
+      NETWORK_NAME: VGGnet_train
+      NUM_ITER: 30000
+      RPN_BATCHSIZE: 256
+      RPN_BBOX_INSIDE_WEIGHTS: &id007 [1.0, 1.0, 1.0, 1.0]
+      RPN_CLOBBER_POSITIVES: false
+      RPN_FG_FRACTION: 0.5
+      RPN_MIN_SIZE: 8
+      RPN_NEGATIVE_OVERLAP: 0.3
+      RPN_NMS_THRESH: 0.7
+      RPN_POSITIVE_OVERLAP: 0.7
+      RPN_POSITIVE_WEIGHT: -1.0
+      RPN_POST_NMS_TOP_N: 2000
+      RPN_PRE_NMS_TOP_N: 12000
+      SCALES: &id008 [1200]
+      SNAPSHOT_INFIX: ''
+      SNAPSHOT_ITERS: 2000
+      SNAPSHOT_PREFIX: VGGnet_fast_rcnn
+      STEPSIZE: 50000
+      USE_FLIPPED: false
+    state:
+      BATCH_SIZE: 128
+      BBOX_INSIDE_WEIGHTS: *id004
+      BBOX_NORMALIZE_MEANS: *id005
+      BBOX_NORMALIZE_STDS: *id006
+      BBOX_NORMALIZE_TARGETS: true
+      BBOX_NORMALIZE_TARGETS_PRECOMPUTED: true
+      BBOX_THRESH: 0.5
+      BG_THRESH_HI: 0.7
+      BG_THRESH_LO: 0.0
+      DISPLAY: 10
+      FG_FRACTION: 0.25
+      FG_THRESH: 0.7
+      HAS_VALIDATION: true
+      IMS_PER_BATCH: 1
+      LEARNING_RATE: 0.001
+      MAX_SIZE: 2000
+      MOMENTUM: 0.9
+      NETWORK_NAME: VGGnet_train
+      NUM_ITER: 30000
+      RPN_BATCHSIZE: 256
+      RPN_BBOX_INSIDE_WEIGHTS: *id007
+      RPN_CLOBBER_POSITIVES: false
+      RPN_FG_FRACTION: 0.5
+      RPN_MIN_SIZE: 8
+      RPN_NEGATIVE_OVERLAP: 0.3
+      RPN_NMS_THRESH: 0.7
+      RPN_POSITIVE_OVERLAP: 0.7
+      RPN_POSITIVE_WEIGHT: -1.0
+      RPN_POST_NMS_TOP_N: 2000
+      RPN_PRE_NMS_TOP_N: 12000
+      SCALES: *id008
+      SNAPSHOT_INFIX: ''
+      SNAPSHOT_ITERS: 2000
+      SNAPSHOT_PREFIX: VGGnet_fast_rcnn
+      STEPSIZE: 50000
+      USE_FLIPPED: false
+  USE_GPU_NMS: true
+state:
+  DATA_DIR: /data/proj_dental/dental_max/Faster-RCNN_TF/data
+  EPS: 1.0e-14
+  GENERAL: *id009
+  GPU_ID: 0
+  IS_MULTISCALE: false
+  PIXEL_MEANS: *id010
+  PRETRAINED_MODEL: /data/proj_dental/dental_max/Faster-RCNN_TF/data/pretrain_model/VGG_imagenet.npy
+  PRETRAINED_MODEL_FILE: VGG_imagenet.npy
+  RNG_SEED: 3
+  ROOT_DIR: /data/proj_dental/dental_max/Faster-RCNN_TF
+  TEST: *id011
+  TRAIN: *id012
+  USE_GPU_NMS: true
