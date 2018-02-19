@@ -260,7 +260,7 @@ def test_net(sess, net, imdb, num_iter=None):
     image_names = all_boxes[0]
 
     print('N images:', len(image_names))
-    print('N classes:', len(all_boxes))
+    print('N classes:', len(all_boxes), imdb.num_classes)
     print('Classes:', imdb._classes)
 
     data_to_save = []
@@ -306,8 +306,13 @@ def return_predictions_web(sess, net, img):
     scores, boxes = im_detect(sess, net, img, box_proposals)
 
     # FIXME Hardcode for web serving
-    num_classes = 2
-    thresh=0.05
+#    num_classes = 2
+#    thresh=0.05
+    classes = ['bg'] + cfg.GENERAL.CLASSES.split(',')
+    num_classes = len(classes)
+    thresh=cfg.TEST.IMAGE_THRESH
+#    print('Classes:', num_classes, classes)
+
 
     all_boxes = [[[] for _ in range(1)]
                  for _ in range(num_classes)]
@@ -324,22 +329,40 @@ def return_predictions_web(sess, net, img):
         all_boxes[j][0] = cls_dets # [fclass, image]
 
     # TODO FIXME Not reviewed for multiple classes
-
+#    image_boxes = all_boxes[1]
+#
+#    data_to_save = []
+#    for i, img_name in enumerate(image_names):
+#        boxes = image_boxes[i]
+#        for j, box in enumerate(boxes):
+#            data_to_save.append([
+#                int(box[0]),
+#                int(box[1]),
+#                int(box[2]),
+#                int(box[3]),
+#                float(box[4]),
+#                j
+#            ])
     image_names = all_boxes[0]
-    image_boxes = all_boxes[1]
+
+#    print('N images:', len(image_names))
+#    print('N classes:', len(all_boxes))
 
     data_to_save = []
-    for i, img_name in enumerate(image_names):
-        boxes = image_boxes[i]
-        for j, box in enumerate(boxes):
-            data_to_save.append([
-                int(box[0]),
-                int(box[1]),
-                int(box[2]),
-                int(box[3]),
-                float(box[4]),
-                j
-            ])
+    for i, img_name in list(enumerate(image_names)):
+        for j, class_name in list(enumerate(classes))[1:]:
+            boxes = all_boxes[j][i]
+            for k, box in enumerate(boxes):
+                data_to_save.append([
+                    int(box[0]),
+                    int(box[1]),
+                    int(box[2]),
+                    int(box[3]),
+                    box[4],
+                    k,
+                    class_name
+                ])
+
     return data_to_save
 
 def validate_model(num_iter):

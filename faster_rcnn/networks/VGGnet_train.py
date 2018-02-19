@@ -4,13 +4,13 @@ from fast_rcnn.config import cfg
 
 #define
 
-# n_classes = 2
-
 _feat_stride = [16,]
 
 class VGGnet_train(Network):
     def __init__(self, trainable=True):
-        self.n_classes = cfg.GENERAL.N_CLASSES
+#        self.n_classes = cfg.GENERAL.N_CLASSES
+        self.classes = ['bg'] + cfg.GENERAL.CLASSES.split(',')
+        self.n_classes = len(self.classes)
         print('N_CLASSES =', self.n_classes)
         self.inputs = []
         self.data = tf.placeholder(tf.float32, shape=[None, None, None, 3])
