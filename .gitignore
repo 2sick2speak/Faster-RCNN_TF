@@ -1,8 +1,9 @@
 *.pyc
-*.so
-*.o
+#*.so
+#*.o
 faster_rcnn_models
 data
 temp
 output
+tensorboard_data
 experiments/completed_experiments.txt
