@@ -14,6 +14,7 @@ import numpy as np
 import scipy.sparse
 import pickle
 from fast_rcnn.config import cfg
+import pandas as pd
 
 
 class dental(imdb):
@@ -125,7 +126,7 @@ class dental(imdb):
             y1 = float(bbox.find('ymin').text) - 1
             x2 = float(bbox.find('xmax').text) - 1
             y2 = float(bbox.find('ymax').text) - 1
-            if x2 - x1 <=0:
+            if x2 - x1 <= 0:
                 print(x2, x1)
             cls = self._class_to_ind[obj.find('name').text.lower().strip()]
             boxes[ix, :] = [x1, y1, x2, y2]
@@ -141,23 +142,32 @@ class dental(imdb):
                 'flipped' : False,
                 'seg_areas' : seg_areas}
 
-    def evaluate_metrics(self, pred_boxes, iou_threshold=cfg.TEST.IOU_THRESHOLD):
+    def evaluate_metrics(self, pred_boxes, iou_threshold=None):
+        
+        iou_threshold = iou_threshold if iou_threshold is not None else cfg.TEST.IOU_THRESHOLD
+        
+        print('N images in roidb:', len(self.gt_roidb()))
 
-        ground_truth = [item['boxes'] for item in self.gt_roidb()]
-        ground_truth = dict(zip(self.image_index, ground_truth))
+        gt_dfs = list()
+        for i, item in enumerate(self.gt_roidb()):
+            gt_df = pd.DataFrame(item['boxes'], columns=['x1', 'y1', 'x2', 'y2'])
+            gt_df['class_id'] = item['gt_classes']
+            gt_df['img_name'] = self.image_index[i]
+            gt_dfs.append(gt_df)
 
-        # Collect bboxes
-        pred_boxes_dict = {}
-        for box in pred_boxes:
-            image_index = box[0].split('/')[-1].replace(self._image_ext, '')
-            box_coord = box[1:5]
-            boxes_list = pred_boxes_dict.get(image_index, list())
-            boxes_list.append(box_coord)
-            pred_boxes_dict[image_index] = boxes_list
+        gt_df = pd.concat(gt_dfs)
 
+        pred_df = pd.DataFrame(pred_boxes).loc[:, [0, 1, 2, 3, 4, 8]]
+        pred_df.columns = ['img_name', 'x1', 'y1', 'x2', 'y2', 'class_id']
+        pred_df.img_name = pred_df.img_name \
+                               .str.split(os.sep).str[-1] \
+                               .str.split('.').str[: -1].str.join('.')
+        
         metrics = collect_metrics(
-            ground_truth,
-            pred_boxes_dict,
+            gt_df,
+            pred_df,
             self.image_index,
-            cfg.TEST.IOU_THRESHOLD)
+            self._classes,
+            iou_threshold
+        )
         return metrics

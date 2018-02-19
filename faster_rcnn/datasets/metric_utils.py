@@ -31,129 +31,147 @@ def iou(a, b):
     return float(i[2] / u[2]) * float(i[3] / u[3])
 
 
-def collect_metrics(ground_truth, pred_boxes_dict,
-                    validation_files, iou_threshold=0.5):
-    """
-    Parameters
-    ----------
-    ground_truth : dict
-        Dict with ground truth boxes in format {validation_name: boxes_list}.
-        Validation name = img name without extension
-    pred_boxes_dict : dict
-        Dict with predicted boxes in format {validation_name: boxes_list}.
-        Validation name = img name without extension
-    validation_files : list
-        List of validation filenames.
-        Validation name = img name without extension
-    iou_threshold : float, optional (default=0.5)
-        Threshhold for iou to assign certain pred box to certain gt box
-    """
-#    print(ground_truth)
-#    print(pred_boxes_dict)
-#    print(validation_files)
+def collect_metrics(gt_df, pred_df, img_names, classes, iou_threshold):
 
-    metrics = []
-    for img_name in validation_files:
-        metric = dict()
-        metric['img_name'] = img_name
+    gt_df['id'] = list(range(len(gt_df)))
+    pred_df['id'] = list(range(len(pred_df)))
+    print(gt_df)
+    print(pred_df)
+    print(img_names)
+    print(classes)
+    print(iou_threshold)
 
-        # Pairwise iou for bboxes
-        bbox_iou = []
+    img_metrics = list()
+    for img_name in img_names:
+        img_metric = dict()
+        img_metric['img_name'] = img_name
 
-        all_gt_boxes = ground_truth[img_name]
-        all_pred_boxes = pred_boxes_dict.get(img_name, [])
-        if len(all_gt_boxes) == 0 and len(all_pred_boxes) == 0:
-            # No boxes for image. All good
-            metric['tp'] = 0
-            metric['fp'] = 0
-            metric['fn'] = 0
-            metric['aiou'] = 1
-            metric['gtp'] = 0
-            metric['precision'] = 1
-            metric['recall'] = 1
-            metric['accuracy'] = 1
-            metric['f'] = 1
-            metric['num_pred_boxes'] = 0
-            metric['num_gt_boxes'] = 0
-            metrics.append(metric)
-            continue
+        metrics = list()
+        for class_id in range(len(classes) if len(classes) > 2 else 1):
+            metric = dict()
 
-        elif len(all_gt_boxes) == 0 and len(all_pred_boxes) > 0:
-            # Only false positivies
-            metric['tp'] = 0
-            metric['fp'] = len(all_pred_boxes)
-            metric['fn'] = 0
-            metric['aiou'] = 0
-            metric['gtp'] = 0
-            metric['precision'] = 0
-            metric['recall'] = 0
-            metric['accuracy'] = 0
-            metric['f'] = 0
-            metric['num_pred_boxes'] = len(all_pred_boxes)
-            metric['num_gt_boxes'] = 0
-            metrics.append(metric)
-            continue
+            if class_id:
+                gt_boxes = gt_df.query('img_name == @img_name and class_id == @class_id')
+                pred_boxes = pred_df.query('img_name == @img_name and \
+                                                class_id == @class_id')
+            else:
+                gt_boxes = gt_df.query('img_name == @img_name')
+                pred_boxes = pred_df.query('img_name == @img_name')
 
-        # First - predicted, second - gt
-        for i, gt_box in enumerate(all_gt_boxes):
-            for j, pred_box in enumerate(all_pred_boxes):
-                iou_value = iou(pred_box, gt_box)
-                if iou_value > 0:
-                    bbox_iou.append(tuple([[j, i], iou_value]))
-        bbox_iou  = sorted(
-            bbox_iou,
-            key=lambda x: x[1],
-            reverse=True)
+            num_gt_boxes = len(gt_boxes)
+            num_pred_boxes = len(pred_boxes)
 
-        pred_set = set(range(len(all_pred_boxes)))
-        gt_set = set(range(len(all_gt_boxes)))
-        iou_sum, metric['tp'], metric['fp'], metric['fn'] = 0, 0, 0, 0
+            if num_gt_boxes == 0 and num_pred_boxes == 0:
+                # No boxes for image
+                metric['tp'] = 0
+                metric['fp'] = 0
+                metric['fn'] = 0
+                metrics.append(metric)
+                continue
 
-        for [i, j], iou_value in bbox_iou:
-            # Filter intersections with only one allowed per gt
-            # i - predicted, j - ground true
-            if i in pred_set and j in gt_set:
-                iou_sum += iou_value
-                pred_set.remove(i)
-                gt_set.remove(j)
-                if iou_value > iou_threshold:
-                    metric['tp'] += 1
+            elif num_gt_boxes == 0 and num_pred_boxes > 0:
+                # Only false positivies
+                metric['tp'] = 0
+                metric['fp'] = len(pred_boxes)
+                metric['fn'] = 0
+                metrics.append(metric)
+                continue
+
+            elif num_gt_boxes > 0 and num_pred_boxes == 0:
+                # Only false negatives
+                metric['tp'] = 0
+                metric['fp'] = 0
+                metric['fn'] = len(gt_boxes)
+                metrics.append(metric)
+                continue
+
+            # Calculate pairwise iou for intersecting bboxes
+            union_df = pd.merge(pred_boxes, gt_boxes, how='outer', on='class_id',
+                                suffixes=('_pred', '_gt'), copy=False)
+            for u in union_df.itertuples():
+                if u.x1_pred == u.x1_pred and u.x1_gt == u.x1_gt:
+                    union_df.loc[u.Index, 'iou'] = iou((u.x1_pred, u.y1_pred,
+                                                        u.x2_pred, u.y2_pred),
+                                                       (u.x1_gt, u.y1_gt,
+                                                        u.x2_gt, u.y2_gt))
                 else:
-                    metric['fp'] += 1
-                    metric['fn'] += 1
-            if len(pred_set) == 0 or len(gt_set) == 0:
-                # Have no available match place
-                break
+                    union_df.loc[u.Index, 'iou'] = 0
+            union_df.sort_values('iou', ascending=False, inplace=True)
 
-        metric['fp'] += len(pred_set)
-        metric['fn'] += len(gt_set)
-        all_boxes_len = len(all_gt_boxes) + len(all_pred_boxes)
+            pred_set = set(union_df.id_pred)
+            gt_set = set(union_df.id_gt)
+            iou_sum, metric['tp'], metric['fp'], metric['fn'] = 0, 0, 0, 0
 
-        metric['aiou'] = iou_sum / all_boxes_len if all_boxes_len > 0 else 0
-        metric['gtp'] = metric['tp'] + metric['fn']
-        metric['precision'] = metric['tp'] / (metric['tp'] + metric['fp']) \
-            if len(all_pred_boxes) > 0 else 0
-        metric['recall'] = metric['tp'] / metric['gtp']
-        metric['accuracy'] = metric['tp'] / (metric['tp'] + metric['fp'] + metric['fn'])
-        metric['f'] = 0 if metric['precision'] + metric['recall'] == 0 else \
-            2 * (metric['precision'] * metric['recall']) / \
-            (metric['precision'] + metric['recall'])
-        metric['num_pred_boxes'] = len(all_pred_boxes)
-        metric['num_gt_boxes'] = len(all_gt_boxes)
+            for u in union_df.itertuples():
+                if u.id_pred in pred_set and u.id_gt in gt_set and u.iou > 0:
+                    # Filter intersections with only one allowed per gt
+                    # iou_sum += u.iou
+                    pred_set.remove(u.id_pred)
+                    gt_set.remove(u.id_gt)
+                    if u.iou > iou_threshold:
+                        metric['tp'] += 1
+                    else:
+                        metric['fp'] += 1
+                        metric['fn'] += 1
+                elif min(len(pred_set), len(gt_set)) == 0 or u.iou == 0:
+                    # Have no available match place or no intersecting bboxes left
+                    break
+                    
+            metric['fp'] += len(pred_set)
+            metric['fn'] += len(gt_set)
 
-        # Check metric sanity
-        assert metric['fp'] + metric['tp'] == len(all_pred_boxes)
-        metrics.append(metric)
-    metrics = pd.DataFrame(metrics)
+            # calculate_metrics()
+            if not class_id:
+                for m in metric:
+                    img_metric[m] = metric[m]
+            else:
+                for m in metric:
+                    img_metric['zz_{}_{}'.format(classes[class_id], m)] = metric[m]
+            
+        img_metrics.append(img_metric)
+            
+    img_metrics = pd.DataFrame(img_metrics).fillna(0)
 
-    # Check correct boxes amount
-    total_boxes_predicted = sum(
-        [len(pred_boxes_dict[key]) for key in pred_boxes_dict.keys()])
-    assert metrics['num_pred_boxes'].sum() == total_boxes_predicted
+    for class_id in range(len(classes) if len(classes) > 2 else 1):
+        if not class_id:
+            pfx = ''
+        else:
+            pfx = 'zz_{}_'.format(classes[class_id])
 
-#    print(metrics)
+        img_metrics[pfx + 'gtp'] = img_metrics[pfx + 'tp'] + img_metrics[pfx + 'fn']
+        num_tp = img_metrics[pfx + 'tp'].sum()
+        num_fp = img_metrics[pfx + 'fp'].sum()
+        num_fn = img_metrics[pfx + 'fn'].sum()
+        num_unique_boxes = num_tp + num_fp + num_fn
+        num_gt_boxes = num_tp + num_fn
+        num_pred_boxes = num_tp + num_fp
+
+        img_metrics[pfx + 'precision'] = num_tp / num_pred_boxes \
+            if num_pred_boxes > 0 else 1
+        img_metrics[pfx + 'recall'] = num_tp / num_gt_boxes \
+            if num_gt_boxes > 0 else 1
+
+        if not class_id:
+            img_metrics[pfx + 'f'] = 2 * (img_metrics[pfx + 'precision']
+                                          * img_metrics[pfx + 'recall']) \
+                                     / (img_metrics[pfx + 'precision']
+                                        + img_metrics[pfx + 'recall']) \
+                if img_metrics[pfx + 'precision'].mean() \
+                   + img_metrics[pfx + 'recall'].mean() > 0 else 0
+            img_metrics[pfx + 'f2'] = 5 * (img_metrics[pfx + 'precision']
+                                           * img_metrics[pfx + 'recall']) \
+                                      / (4 * img_metrics[pfx + 'precision']
+                                         + img_metrics[pfx + 'recall']) \
+                if img_metrics[pfx + 'precision'].mean() \
+                   + img_metrics[pfx + 'recall'].mean() > 0 else 0
+            img_metrics[pfx + 'accuracy'] = num_tp / num_unique_boxes \
+                if num_unique_boxes > 0 else 1
+            metric['num_gt_boxes'] = num_gt_boxes
+            metric['num_pred_boxes'] = num_pred_boxes
+
+    # print(img_metrics)
     
-    return metrics
+    return img_metrics
 
 
 def get_from_files(dataset_name):
