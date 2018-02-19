@@ -42,7 +42,15 @@ for split in ['trainval', 'test']:
     print(name)
     periodont_classes = ['periodontitis']
     __sets[name] = (lambda split=split:
-            datasets.dental(split, periodont_classes, 'periodontitis'))
+            datasets.dental(split, periodont_classes, 'periodont'))
+
+## Periodontitis updated dataset
+for split in ['trainval', 'test']:
+    name = 'periodontitis_{}'.format(split)
+    print(name)
+    periodontitis_classes = ['periodontitis']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, periodontitis_classes, 'periodontitis'))
 
 ## Caries + periodontitis dataset
 for split in ['trainval', 'test']:
@@ -51,6 +59,62 @@ for split in ['trainval', 'test']:
     cp_classes = ['periodontitis', 'caries']
     __sets[name] = (lambda split=split:
             datasets.dental(split, cp_classes, 'cp'))
+
+## Caries + periodontitis dataset bitewings
+for split in ['trainval', 'test']:
+    name = 'bitewing_cp_{}'.format(split)
+    print(name)
+    cp_classes = ['periodontitis', 'caries']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, cp_classes, 'bitewing_cp'))
+
+## Caries + periodontitis dataset bitewings (+probable cases)
+for split in ['trainval', 'test']:
+    name = 'bitewing_cp_prob_{}'.format(split)
+    print(name)
+    cp_classes = ['periodontitis', 'caries']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, cp_classes, 'bitewing_cp_prob'))
+
+## Caries + periodontitis dataset bitewings augmented
+for split in ['trainval', 'test']:
+    name = 'bitewing_cp_augm_{}'.format(split)
+    print(name)
+    cp_classes = ['periodontitis', 'caries']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, cp_classes, 'bitewing_cp_augm'))
+
+## Caries + periodontitis dataset bitewings augmented
+for split in ['trainval', 'test']:
+    name = 'bitewing_cp_prob_augm_{}'.format(split)
+    print(name)
+    cp_classes = ['periodontitis', 'caries']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, cp_classes, 'bitewing_cp_prob_augm'))
+
+## Caries + periodontitis dataset panorama crops
+for split in ['trainval', 'test']:
+    name = 'panorama_crops_cp_{}'.format(split)
+    print(name)
+    cp_classes = ['periodontitis', 'caries']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, cp_classes, 'panorama_crops_cp'))
+
+## Caries + periodontitis dataset panorama crops + augmented bitewing 320 with prob_*
+for split in ['trainval', 'test']:
+    name = 'mix_cp_{}'.format(split)
+    print(name)
+    cp_classes = ['periodontitis', 'caries']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, cp_classes, 'mix_cp'))
+
+## Pathologies + treatements mistakes + treatement resuts dataset augmented mix 320, bitewing, caries, periodontitis with prob_*
+for split in ['trainval', 'test']:
+    name = 'mix320_bitewing_caries_periodontitis_cp_{}'.format(split)
+    print(name)
+    cp_classes = ['restoration', 'caries', 'endodontic_treat', 'crown', 'implant','overfilling', 'periodontitis', 'underfilling', 'void', 'apical_perforation', 'ledge']
+    __sets[name] = (lambda split=split:
+            datasets.dental(split, cp_classes, 'mix320_bitewing_caries_periodontitis_cp'))
 
 def get_imdb(name):
     """Get an imdb (image database) by name."""

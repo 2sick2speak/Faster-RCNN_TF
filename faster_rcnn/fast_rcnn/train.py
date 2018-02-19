@@ -160,7 +160,7 @@ class SolverWrapper(object):
         # optimizer and learning rate
         global_step = tf.Variable(0, trainable=False)
         lr = tf.train.exponential_decay(cfg.TRAIN.LEARNING_RATE, global_step,
-                                        cfg.TRAIN.STEPSIZE, 0.1, staircase=True)
+                                        cfg.TRAIN.STEPSIZE, cfg.TRAIN.DECAY_RATE, staircase=True) #decay rate 0.1 default
         momentum = cfg.TRAIN.MOMENTUM
         train_op = tf.train.MomentumOptimizer(lr, momentum).minimize(loss, global_step=global_step)
 
@@ -204,6 +204,9 @@ class SolverWrapper(object):
                 run_metadata=run_metadata)
             summary_writer.add_summary(summary, iter)
 
+            summary = tf.Summary(value=[tf.Summary.Value(tag='lr', simple_value=lr.eval())])
+            summary_writer.add_summary(summary, iter)
+            
             rpn_lb_list.append(rpn_loss_box_value)
             rpn_cls_list.append(rpn_loss_cls_value)
             loss_cls_list.append(loss_cls_value)

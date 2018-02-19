@@ -2,13 +2,13 @@ import tensorflow as tf
 from networks.network import Network
 from fast_rcnn.config import cfg
 
-# n_classes = 2
-
 _feat_stride = [16,]
 
 class VGGnet_test(Network):
     def __init__(self, trainable=True):
-        self.n_classes = cfg.GENERAL.N_CLASSES
+#        self.n_classes = cfg.GENERAL.N_CLASSES
+        self.classes = ['bg'] + cfg.GENERAL.CLASSES.split(',')
+        self.n_classes = len(self.classes)
         self.inputs = []
         self.data = tf.placeholder(tf.float32, shape=[None, None, None, 3])
         self.im_info = tf.placeholder(tf.float32, shape=[None, 3])
