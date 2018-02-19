@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" promptOnRemoteOverwrite="CHECK_CONTENT" serverName="dtserver.tuzoff.ru" createEmptyFolders="true" notifyRemoteChanges="true">
+    <serverData>
+      <paths name="dtserver.tuzoff.ru">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/RAID/ML Data/docker-cuda/ltuzova/Faster-RCNN_TF.dev" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/RAID/ML Data/docker-cuda/ltuzova/Faster-RCNN_TF.dev/output" />
+            <excludedPath path="/RAID/ML Data/docker-cuda/ltuzova/Faster-RCNN_TF.dev/data" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>

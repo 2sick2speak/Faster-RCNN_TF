@@ -276,16 +276,16 @@ def test_net(sess, net, imdb, num_iter=None):
                     int(box[3]),
                     box[4],
                     k,
-                    class_name
+                    class_name,
+                    j
                 ])
 
     with open(det_file, "w") as csv_file:
         writer = csv.writer(csv_file, delimiter=',')
-        writer.writerow(['img_name', 'x1', 'y1', 'x2', 'y2', 'score', 'box_id', 'class_name'])
+        writer.writerow(['img_name', 'x1', 'y1', 'x2', 'y2', 'score', 'box_id', 'class_name', 'class_id'])
         for line in data_to_save:
             writer.writerow(line)
 
-    # TODO Calculate separate metrics for each class
     metrics = imdb.evaluate_metrics(data_to_save)
 
     metrics_path = os.path.join(output, 'metrics')
@@ -294,7 +294,11 @@ def test_net(sess, net, imdb, num_iter=None):
     metrics_filename = os.path.join(metrics_path, 'metrics{0}.csv'.format(extra_files_path))
     metrics.to_csv(metrics_filename, index=False)
 
-    print(metrics.describe())
+    # print(metrics.describe())
+    for field in metrics.columns:
+        if field != 'img_name':
+            print('{0}: {1:.4f}'.format(field, metrics[field].mean()))
+
     print('Validation finished for iter num: {0}'.format(num_iter))
 
     return metrics

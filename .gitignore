@@ -1,6 +1,6 @@
 *.pyc
-*.so
-*.o
+#*.so
+#*.o
 faster_rcnn_models
 data
 temp
