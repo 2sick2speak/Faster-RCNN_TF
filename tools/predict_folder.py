@@ -100,7 +100,9 @@ if __name__ == '__main__':
                 int(box[2]),
                 int(box[3]),
                 box[4],
-                j
+#                j,
+                box[5],
+                box[6]
             ])
     det_folder = os.path.join(
         'output',
@@ -114,7 +116,7 @@ if __name__ == '__main__':
 
     with open(det_file, "w") as csv_file:
         writer = csv.writer(csv_file, delimiter=',')
-        writer.writerow(['img_name', 'x1', 'y1', 'x2', 'y2', 'score', 'box_id'])
+        writer.writerow(['img_name', 'x1', 'y1', 'x2', 'y2', 'score', 'box_id', 'class_name'])
         for line in data_to_save:
             writer.writerow(line)
     print('Predictions completed and saved to folder: {0}'.format(det_file))
