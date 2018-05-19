@@ -1,0 +1,35 @@
+# https://devblogs.nvidia.com/parallelforall/nvidia-docker-gpu-server-application-deployment-made-easy/
+
+# 1 required on the host: nvidia drivers (check nvidia-smi), docker-ce, nvidia-docker
+# 2 this Dockerfile requires in the same folder: current_key file with ssh keys, cuda.sh with PATH variables
+
+# 3 docker volume create --driver=nvidia-docker nvidia_driver_384.47 # the driver version might be different and the volume name should correspond to it
+# 4 docker-compose build --no-cache && docker-compose up -d
+
+# more info: https://stackoverflow.com/questions/41346401/use-nvidia-docker-compose-launch-a-container-but-exited-soon#comment73796775_41947086
+
+version: "2" # don't change anything unless specified
+volumes:
+  nvidia_driver_384.47: # the same name as the one created above
+    external: true # this will use the volume we created above
+
+services:
+  cuda:
+    build:
+      context: .
+    devices:
+        - /dev/nvidiactl
+        - /dev/nvidia-uvm
+        - /dev/nvidia-uvm-tools
+        - /dev/nvidia0 # in general /dev/nvidia№ where № depends on which gpu card is wanted to be used
+        - /dev/nvidia1
+    volumes:
+        - "nvidia_driver_384.47:/usr/local/nvidia:ro" # this is required, the other volumes could be different
+        - "/RAID/ML Data/docker-cuda:/data"
+        - "~/Documents/Tuzoff Folders/MyDocs/Code:/tuzoff-code"
+    environment:
+        DEBUG: "off"
+    ports:
+        - "0.0.0.0:2222:22" # external ip and port could be changed
+
+    restart: unless-stopped
